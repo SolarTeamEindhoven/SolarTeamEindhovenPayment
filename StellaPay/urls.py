@@ -15,7 +15,12 @@ Including another URLconf
 """
 from django.conf.urls import url
 from django.contrib import admin
+from django.urls import path
+
+from .views import identification
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
+    path('identification/request-user/<int:card_id>/', identification.check_identification),
+    path('identification/set-card-mapping/', identification.generate_card_mapping)
 ]
