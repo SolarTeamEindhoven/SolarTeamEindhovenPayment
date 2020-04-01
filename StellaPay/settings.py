@@ -24,7 +24,7 @@ SECRET_KEY = 'ta7qqwph+795_6ukhscxb!jx(j@97lqqn(&1^jq4s8#9lnka=x'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['staartvin.com']
 
 # Application definition
 
