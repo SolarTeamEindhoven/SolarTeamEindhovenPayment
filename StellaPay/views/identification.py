@@ -8,18 +8,23 @@ from StellaPay.models import RegistrationDevice, Customer
 
 
 def check_identification(request, card_id=None):
-    print("GOT UUID", card_id)
+    """"Accept requests from /identification/request-user/"""
 
     matched_device = None
 
+    # Try to find a card with the given id
     try:
         matched_device = RegistrationDevice.objects.get(uuid=card_id)
     except ObjectDoesNotExist:
         return HttpResponseNotFound("No registration device with that id found")
 
+    # Return found card in JSON response (along with the owner of the card)
     return JsonResponse(
         {"card_id": matched_device.uuid,
-         "owner": str(matched_device.owner)})
+         "owner": {
+             "name": str(matched_device.owner),
+             "email": str(matched_device.owner.email)
+         }})
 
 
 @csrf_exempt
