@@ -24,26 +24,29 @@ def check_identification(request, card_id=None):
 
 @csrf_exempt
 def generate_card_mapping(request):
+    """Accept requests from /identification/set-card-mapping/"""
+
+    # Check if we have a POST request
     if request.method != "POST":
         return HttpResponseBadRequest("Your method should be POST")  # We expect a POST request
 
+    # Try to grab the JSON data from the body of the POST request
     json_data = json.loads(request.body)
 
     card_id = None
     user_email = None
 
+    # Try to read the card id from JSON
     try:
         card_id = int(json_data["card_id"])
     except KeyError:
         return HttpResponseBadRequest("No card id provided")
 
+    # Try to read email from JSON
     try:
         user_email = str(json_data["email"])
     except KeyError:
         return HttpResponseBadRequest("No user email provided")
-
-    print(card_id)
-    print(user_email)
 
     # Check if the card already exists
     if len(RegistrationDevice.objects.filter(uuid=card_id)) > 0:
