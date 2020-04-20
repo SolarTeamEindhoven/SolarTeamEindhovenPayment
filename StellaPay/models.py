@@ -1,3 +1,4 @@
+import pytz
 from django.db import models
 
 
@@ -23,10 +24,13 @@ class Customer(models.Model):
 
 
 class Transaction(models.Model):
-    buyer = models.OneToOneField(Customer, on_delete=models.PROTECT)
+    buyer = models.ForeignKey(Customer, on_delete=models.PROTECT)
     date_time = models.DateTimeField(auto_now_add=True)
-    item_bought = models.OneToOneField(Category, on_delete=models.PROTECT)
+    item_bought = models.ForeignKey(Category, on_delete=models.PROTECT)
     price = models.DecimalField(max_digits=10, decimal_places=2, null=False, default=0.0)
+
+    def get_date_time_in_timezone(self, time_zone: str = 'Europe/Amsterdam'):
+        return self.date_time.astimezone(pytz.timezone(time_zone))
 
     def __str__(self):
         return str(self.buyer) + " bought " + str(self.item_bought) + " for " + str(self.price)

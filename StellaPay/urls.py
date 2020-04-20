@@ -17,10 +17,14 @@ from django.conf.urls import url
 from django.contrib import admin
 from django.urls import path
 
-from .views import identification
+from .views import identification, users, products, transactions
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
     path('identification/request-user/<str:card_id>/', identification.check_identification),
-    path('identification/set-card-mapping/', identification.generate_card_mapping)
+    path('identification/add-card-mapping/', identification.generate_card_mapping),
+    path('users', users.get_users),
+    path('products', products.get_products),
+    path('products/product/<str:product_name>', products.get_product_info),
+    path('transactions/user', transactions.get_transactions),
 ]

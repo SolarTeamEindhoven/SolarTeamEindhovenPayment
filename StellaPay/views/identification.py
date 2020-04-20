@@ -29,7 +29,7 @@ def check_identification(request, card_id=None):
 
 @csrf_exempt
 def generate_card_mapping(request):
-    """Accept requests from /identification/set-card-mapping/"""
+    """Accept requests from /identification/add-card-mapping/"""
 
     # Check if we have a POST request
     if request.method != "POST":
