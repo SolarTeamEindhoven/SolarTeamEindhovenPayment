@@ -1,5 +1,4 @@
 import json
-import locale
 from datetime import datetime
 
 import pytz
@@ -13,7 +12,7 @@ from StellaPay.models import Transaction
 def get_transactions(request):
     """"Accept requests from /transactions/user/"""
 
-    locale.setlocale(locale.LC_ALL, 'nl_NL')
+    # locale.setlocale(locale.LC_ALL, 'nl_NL')
 
     # Check if we have a POST request
     if request.method != "POST":
