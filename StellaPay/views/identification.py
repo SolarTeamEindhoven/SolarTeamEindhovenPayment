@@ -1,4 +1,5 @@
 import json
+from json.decoder import JSONDecodeError
 
 from django.core.exceptions import ObjectDoesNotExist
 from django.http import HttpResponseNotFound, JsonResponse, HttpResponse, HttpResponseBadRequest
@@ -36,7 +37,12 @@ def generate_card_mapping(request):
         return HttpResponseBadRequest("Your method should be POST")  # We expect a POST request
 
     # Try to grab the JSON data from the body of the POST request
-    json_data = json.loads(request.body)
+    json_data = None
+
+    try:
+        json_data = json.loads(request.body)
+    except JSONDecodeError:
+        return HttpResponseBadRequest("Your body does not contain JSON.")
 
     card_id = None
     user_email = None
