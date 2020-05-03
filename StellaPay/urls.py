@@ -21,8 +21,8 @@ from .views import identification, users, products, transactions
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
-    path('identification/request-user/<str:card_id>/', identification.check_identification),
-    path('identification/add-card-mapping/', identification.generate_card_mapping),
+    path('identification/request-user/<str:card_id>', identification.check_identification),
+    path('identification/add-card-mapping', identification.generate_card_mapping),
     path('users', users.get_users),
     path('products', products.get_products),
     path('products/product/<str:product_name>', products.get_product_info),
