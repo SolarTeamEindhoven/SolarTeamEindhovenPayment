@@ -49,7 +49,7 @@ def generate_card_mapping(request):
 
     # Try to read the card id from JSON
     try:
-        card_id = int(json_data["card_id"])
+        card_id = str(json_data["card_id"])
     except KeyError:
         return HttpResponseBadRequest("No card id provided")
 
@@ -79,3 +79,21 @@ def generate_card_mapping(request):
     new_registration_device.save()
 
     return HttpResponse("Card mapping is set to " + str(matched_user), status=200)
+
+
+def get_cards_of_user(request, email: str):
+    """Accept requests from /identification/cards-of-user/<email>"""
+
+    # Does a user with this email address exist?
+    try:
+        matched_user = Customer.objects.get(email=email)
+    except ObjectDoesNotExist:
+        return HttpResponse("There is no user with that e-mail.", status=403)
+
+    cards = RegistrationDevice.objects.filter(owner__email=email)
+
+    return JsonResponse([{"card_id": card.uuid,
+                          "owner": {
+                              "name": str(card.owner),
+                              "email": str(card.owner.email)
+                          }} for card in cards], safe=False)

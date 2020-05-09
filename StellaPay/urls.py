@@ -17,14 +17,18 @@ from django.conf.urls import url
 from django.contrib import admin
 from django.urls import path
 
-from .views import identification, users, products, transactions
+from .views import identification, users, products, transactions, categories
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
     path('identification/request-user/<str:card_id>', identification.check_identification),
+    path('identification/cards-of-user/<str:email>', identification.get_cards_of_user),
     path('identification/add-card-mapping', identification.generate_card_mapping),
     path('users', users.get_users),
+    path('products/<str:category>', products.get_products_of_category),
     path('products', products.get_products),
     path('products/product/<str:product_name>', products.get_product_info),
+    path('categories', categories.get_categories),
     path('transactions/user', transactions.get_transactions),
+    path('transactions/create', transactions.make_transaction),
 ]
