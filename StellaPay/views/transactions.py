@@ -13,11 +13,13 @@ from StellaPay.models import Transaction, Customer, Product
 def get_transactions(request):
     """"Accept requests from /transactions/user/"""
 
-    # locale.setlocale(locale.LC_ALL, 'nl_NL')
-
     # Check if we have a POST request
     if request.method != "POST":
         return HttpResponseBadRequest("Your method should be POST")  # We expect a POST request
+
+    # Check if user is authenticated
+    if not request.user.is_authenticated:
+        return HttpResponse("You need to be authenticated first", status=401)
 
     # Try to grab the JSON data from the body of the POST request
     try:
@@ -89,6 +91,10 @@ def make_transaction(request):
     # Check if we have a POST request
     if request.method != "POST":
         return HttpResponseBadRequest("Your method should be POST")  # We expect a POST request
+
+    # Check if user is authenticated
+    if not request.user.is_authenticated:
+        return HttpResponse("You need to be authenticated first", status=401)
 
     # Try to grab the JSON data from the body of the POST request
     try:

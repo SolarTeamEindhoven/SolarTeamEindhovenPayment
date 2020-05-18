@@ -1,10 +1,14 @@
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponse
 
 from StellaPay.models import Customer
 
 
 def get_users(request):
     """"Accept requests from /users/"""
+
+    # Check if user is authenticated
+    if not request.user.is_authenticated:
+        return HttpResponse("You need to be authenticated first", status=401)
 
     users = []
 

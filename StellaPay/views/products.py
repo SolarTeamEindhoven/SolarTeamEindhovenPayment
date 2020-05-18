@@ -1,11 +1,15 @@
 from django.core.exceptions import ObjectDoesNotExist
-from django.http import JsonResponse, HttpResponseNotFound
+from django.http import JsonResponse, HttpResponseNotFound, HttpResponse
 
 from StellaPay.models import Product
 
 
 def get_products(request):
     """"Accept requests from /products/"""
+
+    # Check if user is authenticated
+    if not request.user.is_authenticated:
+        return HttpResponse("You need to be authenticated first", status=401)
 
     products = []
 
@@ -22,6 +26,10 @@ def get_products(request):
 def get_product_info(request, product_name: str):
     """"Accept requests from /products/product/<product_name>"""
 
+    # Check if user is authenticated
+    if not request.user.is_authenticated:
+        return HttpResponse("You need to be authenticated first", status=401)
+
     matched_product = None
 
     # Try to find the product with the given name
@@ -37,9 +45,13 @@ def get_product_info(request, product_name: str):
         "category": matched_product.category.name
     })
 
-
 def get_products_of_category(request, category: str):
     """"Accept requests from /products/<category_name>"""
+
+    # Check if user is authenticated
+    if not request.user.is_authenticated:
+        return HttpResponse("You need to be authenticated first", status=401)
+
     products = []
 
     for product in Product.objects.filter(category__name__iexact=category):

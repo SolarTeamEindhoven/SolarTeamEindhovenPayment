@@ -1,6 +1,7 @@
 import json
 from json.decoder import JSONDecodeError
 
+from django.contrib.auth import authenticate, login
 from django.core.exceptions import ObjectDoesNotExist
 from django.http import HttpResponseNotFound, JsonResponse, HttpResponse, HttpResponseBadRequest
 from django.views.decorators.csrf import csrf_exempt
@@ -10,6 +11,10 @@ from StellaPay.models import RegistrationDevice, Customer
 
 def check_identification(request, card_id=None):
     """"Accept requests from /identification/request-user/"""
+
+    # Check if user is authenticated
+    if not request.user.is_authenticated:
+        return HttpResponse("You need to be authenticated first", status=401)
 
     matched_device = None
 
@@ -35,6 +40,10 @@ def generate_card_mapping(request):
     # Check if we have a POST request
     if request.method != "POST":
         return HttpResponseBadRequest("Your method should be POST")  # We expect a POST request
+
+    # Check if user is authenticated
+    if not request.user.is_authenticated:
+        return HttpResponse("You need to be authenticated first", status=401)
 
     # Try to grab the JSON data from the body of the POST request
     json_data = None
@@ -84,6 +93,10 @@ def generate_card_mapping(request):
 def get_cards_of_user(request, email: str):
     """Accept requests from /identification/cards-of-user/<email>"""
 
+    # Check if user is authenticated
+    if not request.user.is_authenticated:
+        return HttpResponse("You need to be authenticated first", status=401)
+
     # Does a user with this email address exist?
     try:
         matched_user = Customer.objects.get(email=email)
@@ -97,3 +110,48 @@ def get_cards_of_user(request, email: str):
                               "name": str(card.owner),
                               "email": str(card.owner.email)
                           }} for card in cards], safe=False)
+
+
+@csrf_exempt
+def authenticate_request(request):
+    # Check if we have a POST request
+    if request.method != "POST":
+        return HttpResponseBadRequest("Your method should be POST")  # We expect a POST request
+
+    # Check if the user is already registered
+    if request.user.is_authenticated:
+        return HttpResponseBadRequest("You are already logged in!")
+
+    # Try to grab the JSON data from the body of the POST request
+    json_data = None
+
+    try:
+        json_data = json.loads(request.body)
+    except JSONDecodeError:
+        return HttpResponseBadRequest("Your body does not contain JSON.")
+
+    username = None
+    password = None
+
+    # Try to read the card id from JSON
+    try:
+        username = str(json_data["username"])
+    except KeyError:
+        return HttpResponseBadRequest("No username provided")
+
+    # Try to read password from JSON
+    try:
+        password = str(json_data["password"])
+    except KeyError:
+        return HttpResponseBadRequest("No password provided")
+
+    # Try to authenticate the user
+    user = authenticate(request, username=username, password=password)
+
+    # Check if the credentials were correct
+    if user is not None:
+        # If so, store the authenticated user as requested
+        login(request=request, user=user)
+        return HttpResponse("Successfully logged in", status=200)
+    else:
+        return HttpResponse("Credentials were incorrect", status=406)
