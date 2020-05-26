@@ -4,7 +4,7 @@ from StellaPay.models import Transaction
 
 
 def index(request):
-    transactions = Transaction.objects.order_by("date_time")
+    transactions = Transaction.objects.order_by("-date_time")[:10]
 
     context = {"transactions": transactions}
 
