@@ -31,14 +31,28 @@
         </div>
     </div>
 
+
+    <div class="ui raised center aligned segment">
+        <h1>Welcome to the Stella Pay Admin dashboard, {{ user.get_username }}!</h1>
+    </div>
+
+
+    <h3 class="ui horizontal divider header">
+        <i class="bar chart icon"></i>
+        Statistics
+    </h3>
+
     <div class="ui container two column grid">
         <div class="row">
-            <div class="column"><h2>Distribution of items bought</h2></div>
-            <div class="column"><h2>Recent transactions</h2></div>
+            <div class="column"><h1>Distribution of items bought</h1></div>
+            <div class="column"><h1>Recent transactions</h1></div>
         </div>
         <div class="row">
+
             <div class="column">
-                <canvas id="transaction_categories" width="200" height="200"></canvas>
+                <div class="ui segment">
+                    <canvas id="transaction_categories" width="200" height="200"></canvas>
+                </div>
             </div>
             <div class="column">
 
@@ -68,10 +82,10 @@
 
     </div>
 
-    <h4 class="ui horizontal divider header">
+    <h3 class="ui horizontal divider header">
         <i class="bar chart icon"></i>
         Debts
-    </h4>
+    </h3>
 
     <div class="ui container one column grid">
         <div class="row">
