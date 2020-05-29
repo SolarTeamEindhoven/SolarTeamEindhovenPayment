@@ -16,6 +16,9 @@
 
 
 <div class="ui top thin menu inverted sidebar labeled icon visible">
+    <a class="item">
+        <img src="https://solarteameindhoven.nl/wp-content/uploads/elementor/thumbs/ste_logo_white-obtcubr4dp2zb0lhro0buazfhx6r0ynvwtiqq6inne.png">
+    </a>
     <a class="item active">
         <i class="home icon"></i>
     </a>
@@ -105,7 +108,7 @@
                     {% for debtor, total_debt in debts.items %}
                         <tr>
                             <td>{{ debtor }}</td>
-                            <td>{{ total_debt }}</td>
+                            <td>€{{ total_debt }}</td>
                         </tr>
                     {% endfor %}
                     </tbody>
