@@ -1,9 +1,11 @@
+from django.contrib.auth.decorators import login_required
 from django.db.models import Sum
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 
 from StellaPay.models import Transaction, Customer
 
 
+@login_required()
 def index(request):
     # Find the 10 recent transactions
     recent_transactions = Transaction.objects.order_by("-date_time")[:10]
@@ -33,5 +35,13 @@ def index(request):
     return render(request, 'backend/homepage.html', context)
 
 
+@login_required
 def user_activity(request):
     return render(request, 'backend/user-activity.html')
+
+
+def login(request):
+    # If user is already authenticated, move them to the homepage.
+    if request.user.is_authenticated:
+        return redirect("/backend/")
+    return render(request, 'backend/login-page.html')

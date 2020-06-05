@@ -22,6 +22,7 @@ from .views import identification, users, products, transactions, categories, ba
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
     path('backend/', backend.index, name="backend-homepage"),
+    path('backend/login', backend.login, name="backend-login"),
     path('backend/user-activity/', backend.user_activity, name="backend-user-activity"),
     path('identification/request-user/<str:card_id>', identification.check_identification),
     path('identification/cards-of-user/<str:email>', identification.get_cards_of_user),
