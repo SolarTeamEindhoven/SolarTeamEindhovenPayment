@@ -1,8 +1,10 @@
 from django.contrib.auth.decorators import login_required
+from django.core.exceptions import ObjectDoesNotExist
 from django.db.models import Sum
+from django.forms import model_to_dict
 from django.shortcuts import render, redirect
 
-from StellaPay.models import Transaction, Customer
+from StellaPay.models import Transaction, Customer, RegistrationDevice
 
 
 @login_required()
@@ -37,7 +39,40 @@ def index(request):
 
 @login_required
 def user_activity(request):
-    return render(request, 'backend/user-activity.html')
+    context = {}
+
+    if 'user' in request.GET:
+        print("Looking for user", request.GET['user'])
+        search_user_email = request.GET['user']
+        try:
+            # Look for a matching user
+            matched_user = Customer.objects.get(email__icontains=search_user_email)
+
+            # Save the user in the context so it's available to the template
+            context["requested_user"] = matched_user
+            # Also provide a dict-like object so we can serialize it to JSON and use in JS scripts
+            context["js_requested_user"] = model_to_dict(matched_user)
+
+            # Find recent transactions and save those in the context
+            recent_transactions = Transaction.objects.filter(buyer=matched_user).order_by('-date_time')[:10]
+
+            # Save recent transcations in the context
+            context["recent_transactions"] = recent_transactions
+
+            # Find registered devices of user
+            registered_devices = RegistrationDevice.objects.filter(owner=matched_user)
+
+            # Save to context
+            context["registered_devices"] = registered_devices
+
+        except ObjectDoesNotExist:
+            # Do nothing
+            pass
+
+    # Put registered users in dropdown box
+    context["all_members"] = Customer.objects.all()
+
+    return render(request, 'backend/user-activity.html', context=context)
 
 
 def login(request):

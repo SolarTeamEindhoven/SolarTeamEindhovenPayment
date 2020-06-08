@@ -32,7 +32,6 @@ def check_identification(request, card_id=None):
              "email": str(matched_device.owner.email)
          }})
 
-
 @csrf_exempt
 def generate_card_mapping(request):
     """Accept requests from /identification/add-card-mapping/"""
@@ -155,3 +154,63 @@ def authenticate_request(request):
         return HttpResponse("Successfully logged in", status=200)
     else:
         return HttpResponse("Credentials were incorrect", status=406)
+
+
+@csrf_exempt
+def remove_card_mapping(request):
+    """Accept requests from /identification/remove-card-mapping/"""
+
+    # Check if we have a POST request
+    if request.method != "POST":
+        return HttpResponseBadRequest("Your method should be POST")  # We expect a POST request
+
+    # Check if user is authenticated
+    if not request.user.is_authenticated:
+        return HttpResponse("You need to be authenticated first", status=401)
+
+    # Try to grab the JSON data from the body of the POST request
+    json_data = None
+
+    try:
+        json_data = json.loads(request.body)
+    except JSONDecodeError:
+        return HttpResponseBadRequest("Your body does not contain JSON.")
+
+    card_id = None
+    user_email = None
+
+    # Try to read the card id from JSON
+    try:
+        card_id = str(json_data["card_id"])
+    except KeyError:
+        return HttpResponseBadRequest("No card id provided")
+
+    # Try to read email from JSON
+    try:
+        user_email = str(json_data["email"])
+    except KeyError:
+        return HttpResponseBadRequest("No user email provided")
+
+    # Check if the card already exists
+    if len(RegistrationDevice.objects.filter(uuid=card_id)) < 0:
+        # We already found a card with that id
+        return HttpResponse("There is no card with that ID", status=403)
+
+    matched_user = None
+
+    # Check if email exists
+    try:
+        matched_user = Customer.objects.get(email=user_email)
+    except ObjectDoesNotExist:
+        return HttpResponse("There is no user with that e-mail.", status=403)
+
+    # Find device
+    try:
+        device = RegistrationDevice.objects.get(owner=matched_user, uuid=card_id)
+    except ObjectDoesNotExist:
+        return HttpResponse("We could not find a card with the given id for the given email", status=403)
+
+    # Delete card from database
+    device.delete()
+
+    return HttpResponse("Card is unlinked from the user", status=200)

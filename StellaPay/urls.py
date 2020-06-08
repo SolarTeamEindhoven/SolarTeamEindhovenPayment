@@ -27,6 +27,7 @@ urlpatterns = [
     path('identification/request-user/<str:card_id>', identification.check_identification),
     path('identification/cards-of-user/<str:email>', identification.get_cards_of_user),
     path('identification/add-card-mapping', identification.generate_card_mapping),
+    path('identification/remove-card-mapping', identification.remove_card_mapping),
     path('users', users.get_users),
     path('products/<str:category>', products.get_products_of_category),
     path('products', products.get_products),
