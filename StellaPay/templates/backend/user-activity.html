@@ -14,6 +14,8 @@
     <link rel="stylesheet" href="{% static "backend/footer.css" %}"/>
     <link rel="stylesheet" href="{% static "backend/nav-bar.css" %}"/>
 
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/smoothness/jquery-ui.css">
+
     <link rel='icon' href='{% static "images/ste-logo.png" %}' type='image/x-icon'/>
 </head>
 <body>
@@ -54,8 +56,6 @@
         </div>
     </div>
 
-
-
     {% if requested_user is not None %}
 
         <h1 class="ui horizontal divider header">
@@ -90,7 +90,7 @@
                             <tr>
                                 <td>{{ transaction.item_bought }}</td>
                                 <td>€{{ transaction.price }}</td>
-                                <td>{{ transaction.date_time }}</td>
+                                <td>{{ transaction.date_time | date:'d M yy - H:i' }}</td>
                             </tr>
                         {% endfor %}
                         </tbody>
@@ -131,6 +131,63 @@
                             </tr>
                         {% endfor %}
                         </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <h3 class="ui horizontal divider header">
+            <i class="money bill alternate chart icon"></i>
+            Transactions
+        </h3>
+
+        <div class="ui container one column grid">
+            <div class="row">
+                <div class="column">
+                    <h2>All transactions performed
+                        <button id="toDateButton" class="ui primary button right floated">
+                            <i class="calendar icon"></i>
+                            <input id="toDateInput" value="Ending date" type="button">
+                        </button>
+
+
+                        <button id="fromDateButton" class="ui secondary button right floated">
+                            <i class="calendar outline icon"></i>
+                            <input id="fromDateInput" value="Starting date" type="button">
+                        </button>
+                    </h2>
+                </div>
+
+            </div>
+
+            <div class="row">
+                <div class="column" style="overflow:scroll; max-height:500px;">
+
+                    <table class="ui striped selectable celled table filtered_transactions">
+                        <thead>
+                        <tr>
+                            <th>Item</th>
+                            <th>Price</th>
+                            <th>Bought at</th>
+                        </tr>
+                        </thead>
+                        <tfoot class="full-width">
+                        <tr>
+                            <th><b>Total cost</b></th>
+                            <th><b id="total_cost_footer">€100</b></th>
+                            <th></th>
+                        </tr>
+                        </tfoot>
+                        <tbody>
+                        {% for transaction in all_transactions %}
+                            <tr class="transaction_entry">
+                                <td class="item_bought">{{ transaction.item_bought }}</td>
+                                <td class="item_price">€{{ transaction.price }}</td>
+                                <td class="item_purchase_datetime">{{ transaction.date_time | date:'d M yy - H:i' }}</td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+
                     </table>
                 </div>
             </div>
@@ -181,6 +238,13 @@
         crossorigin="anonymous"></script>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.3/Chart.min.js"></script>
+
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"
+        integrity="sha256-VazP97ZCwtekAsvgPBSUwPFKdrwD3unUfSGVYrahUqU="
+        crossorigin="anonymous"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.27.0/moment-with-locales.min.js"></script>
+
 
 <!-- Provide data objects to JS scripts -->
 {{ js_requested_user | json_script:"requested_user" }}

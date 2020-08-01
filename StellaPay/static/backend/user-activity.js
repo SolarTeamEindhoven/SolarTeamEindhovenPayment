@@ -91,3 +91,75 @@ $(".remove-device-button").on("click", function (data) {
     }).modal('show');
 });
 
+// Make sure datepickers are ready
+$("#fromDateInput").datepicker({
+    defaultDate: -1, // Default date is yesterday
+    firstDay: 1, // First day is monday
+    maxDate: 0, // From date cannot be bigger than today
+    dateFormat: "dd/mm/yy",
+    onSelect: tryReloadTableView
+});
+
+// Make sure datepickers are ready
+$("#toDateInput").datepicker({
+    defaultDate: 0, // Default date is today
+    firstDay: 1, // First day is monday
+    maxDate: 0, // To date cannot be bigger than today
+    dateFormat: "dd/mm/yy",
+    onSelect: tryReloadTableView
+});
+
+// If the user clicks on a button, open the date picker
+$("#fromDateButton").click(function () {
+    $("#fromDateInput").datepicker("show");
+});
+
+$("#toDateButton").click(function () {
+    $("#toDateInput").datepicker("show");
+});
+
+/**
+ * Try to reload the view of the table (if needed). This means that only the data that is relevant is shown.
+ */
+function tryReloadTableView() {
+
+    // Get from and to date using Moment.js
+    fromDate = moment($("#fromDateInput").val(), "DD/MM/YYYY");
+    toDate = moment($("#toDateInput").val(), "DD/MM/YYYY");
+
+    // Check if both date inputs are valid
+    if (!fromDate.isValid() || !toDate.isValid()) {
+        return;
+    }
+
+    // Keep track of total cost
+    totalCost = 0.0;
+
+    // For every entry, check the date entry and
+    $(".transaction_entry").each(function () {
+
+        // Find out what the purchase date of the item was.
+        purchaseDate = moment($(this).children(".item_purchase_datetime").text(), "DD MMM YYYY - HH:mm");
+
+        // Check if this is a valid purchase date.
+        if (!purchaseDate.isValid()) return;
+
+        // Check if item is purchased between selected dates.
+        if (purchaseDate.isBetween(fromDate, toDate, undefined, "[]")) {
+            // Show it
+            $(this).show();
+
+            // Add the cost of the item to the total cost
+            totalCost += parseFloat($(this).children(".item_price").text().replace("€", ""))
+        } else {
+            $(this).hide();
+        }
+    });
+
+    // Update total costs
+    $("#total_cost_footer").text("€" + totalCost.toFixed(2));
+
+}
+
+
+

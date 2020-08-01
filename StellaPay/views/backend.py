@@ -53,10 +53,12 @@ def user_activity(request):
             # Also provide a dict-like object so we can serialize it to JSON and use in JS scripts
             context["js_requested_user"] = model_to_dict(matched_user)
 
-            # Find recent transactions and save those in the context
-            recent_transactions = Transaction.objects.filter(buyer=matched_user).order_by('-date_time')[:10]
+            all_transaction = Transaction.objects.filter(buyer=matched_user)
 
-            # Save recent transcations in the context
+            # Find recent transactions and save those in the context
+            recent_transactions = all_transaction.order_by('-date_time')[:10]
+
+            # Save recent transactions in the context
             context["recent_transactions"] = recent_transactions
 
             # Find registered devices of user
@@ -64,6 +66,9 @@ def user_activity(request):
 
             # Save to context
             context["registered_devices"] = registered_devices
+
+            # Send all transactions to use for showing total cost
+            context["all_transactions"] = all_transaction.order_by('date_time')
 
         except ObjectDoesNotExist:
             # Do nothing
