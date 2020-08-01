@@ -132,9 +132,6 @@ function tryReloadTableView() {
         return;
     }
 
-    // Keep track of total cost
-    totalCost = 0.0;
-
     // For every entry, check the date entry and
     $(".transaction_entry").each(function () {
 
@@ -148,18 +145,38 @@ function tryReloadTableView() {
         if (purchaseDate.isBetween(fromDate, toDate, "day", "[]")) {
             // Show it
             $(this).show();
-
-            // Add the cost of the item to the total cost
-            totalCost += parseFloat($(this).children(".item_price").text().replace("€", ""))
         } else {
+            // If this is not a valid date, hide it.
             $(this).hide();
         }
     });
 
     // Update total costs
-    $("#total_cost_footer").text("€" + totalCost.toFixed(2));
+    updateTotalCost();
 
 }
+
+/**
+ * Function to update the total cost (in the footer of the transaction table)
+ */
+function updateTotalCost() {
+    // Keep track of total cost
+    totalCost = 0.0;
+
+    // For every entry, check the date entry and
+    $(".transaction_entry").each(function () {
+
+        if ($(this).is(":visible")) {
+            totalCost += parseFloat($(this).children(".item_price").text().replace("€", ""))
+        }
+    });
+
+    // Update total costs
+    $("#total_cost_footer").text("€" + totalCost.toFixed(2));
+}
+
+// Call it once on initial data.
+updateTotalCost();
 
 
 
