@@ -145,7 +145,7 @@ function tryReloadTableView() {
         if (!purchaseDate.isValid()) return;
 
         // Check if item is purchased between selected dates.
-        if (purchaseDate.isBetween(fromDate, toDate, undefined, "[]")) {
+        if (purchaseDate.isBetween(fromDate, toDate, "day", "[]")) {
             // Show it
             $(this).show();
 
