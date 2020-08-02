@@ -136,6 +136,7 @@
             <div class="row">
                 <div class="column">
                     <h2>All transactions performed
+
                         <button id="toDateButton" class="ui primary button right floated">
                             <i class="calendar icon"></i>
                             <input id="toDateInput" value="Ending date" type="button">
@@ -146,6 +147,8 @@
                             <i class="calendar outline icon"></i>
                             <input id="fromDateInput" value="Starting date" type="button">
                         </button>
+
+
                     </h2>
                 </div>
 
@@ -183,21 +186,22 @@
                 </div>
             </div>
 
+            <div class="row">
+                <div class="column">
+                    <button id="generateCSVButton" class="ui green button right floated">
+                        <i class="file alternate outline icon"></i>
+                        Generate CSV file
+                    </button>
+                </div>
+            </div>
+
 
         </div>
 
     {% endif %}
 
-    <div class="ui inverted vertical segment footer">
-        <div class="ui inverted section divider"></div>
-        <img src="{% static "images/ste-logo.png" %}" class="ui centered image">
-
-        <div class="ui horizontal inverted small divided link list">
-            <a class="item" href="mailto:vincent.bolta@solarteameindhoven.nl">Contact Us</a>
-            <a class="item" href="#">User Manual</a>
-            <a class="item" href="#">Copyright Yvo Elling & Vincent Bolta © {% now "Y" %}</a>
-        </div>
-    </div>
+    {# Include footer #}
+    {% include "backend/footer.html" %}
 
 </div>
 

@@ -103,17 +103,8 @@
 
     </div>
 
-    <div class="ui inverted vertical footer segment">
-        <div class="ui inverted section divider"></div>
-        <img src="{% static "images/ste-logo.png" %}"
-             class="ui centered image">
-
-        <div class="ui horizontal inverted small divided link list">
-            <a class="item" href="mailto:vincent.bolta@solarteameindhoven.nl">Contact Us</a>
-            <a class="item" href="#">User Manual</a>
-            <a class="item" href="#">Copyright Yvo Elling & Vincent Bolta © {% now "Y" %}</a>
-        </div>
-    </div>
+    {# Include footer #}
+    {% include "backend/footer.html" %}
 
 </div>
 
