@@ -1,7 +1,7 @@
 import json
 from json.decoder import JSONDecodeError
 
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import authenticate, login, logout
 from django.core.exceptions import ObjectDoesNotExist
 from django.http import HttpResponseNotFound, JsonResponse, HttpResponse, HttpResponseBadRequest
 from django.views.decorators.csrf import csrf_exempt
@@ -154,6 +154,12 @@ def authenticate_request(request):
         return HttpResponse("Successfully logged in", status=200)
     else:
         return HttpResponse("Credentials were incorrect", status=406)
+
+
+def deauthenticate(request):
+    logout(request)  # Very simply request
+
+    return HttpResponse("Deauthenticated", status=200)
 
 
 @csrf_exempt

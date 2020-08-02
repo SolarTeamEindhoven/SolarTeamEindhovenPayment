@@ -37,4 +37,6 @@ urlpatterns = [
     path('transactions/create', transactions.make_transaction),
     path('transactions/all', transactions.get_all_transactions),
     path('authenticate', identification.authenticate_request),
+    path('deauthenticate', identification.deauthenticate),
+
 ]
