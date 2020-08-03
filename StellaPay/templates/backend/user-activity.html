@@ -226,6 +226,29 @@
 </div>
 
 
+<div class="ui tiny basic modal generate-csv-modal">
+    <div class="ui icon header">
+        <i class="file alternate outline icon"></i>
+        Generate CSV file of transactions
+    </div>
+    <div class="content">
+        <p>Do you want to generate a CSV file for {{ requested_user.get_full_name }} or all users?</p>
+    </div>
+    <div class="actions">
+        <div id="generate-single-user-button" class="ui primary inverted button">
+            <div class="ui disabled small inline loader"></div>
+            <i class="user outline icon"></i>
+            {{ requested_user.get_full_name }}
+        </div>
+        <div id="generate-all-users-button" class="ui orange inverted button ">
+            <div class="ui disabled small inline loader"></div>
+            <i class="users icon"></i>
+            All users
+        </div>
+    </div>
+</div>
+
+
 </body>
 <script
         src="https://code.jquery.com/jquery-3.5.1.min.js"

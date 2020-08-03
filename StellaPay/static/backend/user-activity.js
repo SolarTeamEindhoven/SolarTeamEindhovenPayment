@@ -179,105 +179,138 @@ function updateTotalCost() {
 updateTotalCost();
 
 
-// Whenever the user clicks the generate CSV button, we call the API method to generate it.
+// Whenever the user clicks the generate CSV button, we open the modal to choose what CSV is generated.
 $("#generateCSVButton").on("click", function () {
-
-    fromDate = moment.utc($("#fromDateInput").val(), "DD/MM/YYYY"); // Parse it as if it was UTC (as data is stored in UTC)
-    toDate = moment.utc($("#toDateInput").val(), "DD/MM/YYYY"); // Parse it as if it was UTC (as data is stored in UTC)
-
-    data = null;
-
-    // If the to-date is valid, we want to add a day. We want to include the whole day as well.
-    if (toDate.isValid()) {
-        toDate.add(1, "d");
-    }
-
-    // Both dates are valid
-    if (fromDate.isValid() && toDate.isValid()) {
-        data = JSON.stringify({
-            email: requested_user.email, // Use email of request user to request transactional data
-            begin_date: fromDate.toISOString(), // Pass timezone as CET to compensate for UTC
-            end_date: toDate.toISOString()
-        })
-    } else if (fromDate.isValid() && !toDate.isValid()) { // Only from date is valid
-        data = JSON.stringify({
-            email: requested_user.email, // Use email of request user to request transactional data
-            begin_date: fromDate.toISOString()
-        })
-    } else if (!fromDate.isValid() && toDate.isValid()) { // Only to date is valid
-        data = JSON.stringify({
-            email: requested_user.email, // Use email of request user to request transactional data
-            end_date: toDate.toISOString()
-        })
-    } else { // None is valid
-        data = JSON.stringify({
-            email: requested_user.email // Use email of request user to request transactional data
-        })
-    }
-
-    $.post({
-        url: "/transactions/generate_csv", data: data
-    }).done(function (data, textStatus, jqXHR) {
-
-        // Do some magic to convert it to a proper csv file.
-        var filename = "";
-        var disposition = jqXHR.getResponseHeader('Content-Disposition');
-        if (disposition && disposition.indexOf('attachment') !== -1) {
-            var filenameRegex = /filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/;
-            var matches = filenameRegex.exec(disposition);
-            if (matches != null && matches[1]) filename = matches[1].replace(/['"]/g, '');
-        }
-        var type = jqXHR.getResponseHeader('Content-Type');
-
-        var blob;
-        if (typeof File === 'function') {
-            try {
-                blob = new File([data], filename, {type: type});
-            } catch (e) { /* Edge */
-            }
-        }
-        if (typeof blob === 'undefined') {
-            blob = new Blob([data], {type: type});
-        }
-
-        if (typeof window.navigator.msSaveBlob !== 'undefined') {
-            // IE workaround for "HTML7007: One or more blob URLs were revoked by closing the blob for which they were created. These URLs will no longer resolve as the data backing the URL has been freed."
-            window.navigator.msSaveBlob(blob, filename);
-        } else {
-            var URL = window.URL || window.webkitURL;
-            var downloadUrl = URL.createObjectURL(blob);
-
-            // If we have a filename, try to download it.
-            if (filename) {
-                // use HTML5 a[download] attribute to specify filename
-                var a = document.createElement("a");
-                // safari doesn't support this yet
-                if (typeof a.download === 'undefined') {
-                    window.location.href = downloadUrl;
-                } else {
-                    a.href = downloadUrl;
-                    a.download = filename;
-                    document.body.appendChild(a);
-                    a.click();
-                }
-            } else {
-                // Download the file
-                window.location.href = downloadUrl;
-            }
-
-            // Remove the URL
-            setTimeout(function () {
-                URL.revokeObjectURL(downloadUrl);
-            }, 100); // cleanup
-        }
-
-    }).fail(function (error) {
-
-        console.log('Error getting CSV file.')
-        console.log("Status code: " + error.status + "\nError message: " + error.responseText)
-
-    })
+    // Open the modal to choose CSV type
+    $(".generate-csv-modal").modal('show');
 });
+
+// Whenever the user clicks the 'only user' button (in the modal)
+$("#generate-single-user-button").on("click", function () {
+
+    // Hide icon and show loader instead
+    $(this).children(".icon").hide();
+    $(this).children(".loader").addClass("active").removeClass("disabled");
+
+    // When CSV is generated ...
+    generateCSVFile(false).then(r => {
+
+        // Show icon and hide loader.
+        $(this).children(".icon").show();
+        $(this).children(".loader").addClass("disabled").removeClass("active");
+
+        // Also close the modal
+        $(".generate-csv-modal").modal('hide');
+    });
+});
+
+// Whenever the user clicks the 'all users' button.
+$("#generate-all-users-button").on("click", function () {
+
+    // Hide icon and show loader instead
+    $(this).children(".icon").hide();
+    $(this).children(".loader").addClass("active").removeClass("disabled");
+
+    // When CSV is generated ...
+    generateCSVFile(true).then(r => {
+
+        // Show icon again and hide loader
+        $(this).children(".loader").addClass("disabled").removeClass("active");
+        $(this).children(".icon").show();
+
+        // Hide the modal
+        $(".generate-csv-modal").modal('hide');
+    });
+});
+
+/**
+ * Generate a CSV file and let the client download it
+ * @param allUsers True if data of all users should be included. False if only the currently selected user should be included
+ */
+function generateCSVFile(allUsers) {
+    return new Promise((resolve, reject) => {
+        let fromDate = moment.utc($("#fromDateInput").val(), "DD/MM/YYYY"); // Parse it as if it was UTC (as data is stored in UTC)
+        let toDate = moment.utc($("#toDateInput").val(), "DD/MM/YYYY"); // Parse it as if it was UTC (as data is stored in UTC)
+
+        // If the to-date is valid, we want to add a day. We want to include the whole day as well.
+        if (toDate.isValid()) {
+            toDate.add(1, "d");
+        }
+
+        let data = JSON.stringify({
+            email: allUsers ? undefined : requested_user.email, // Use email of requester or undefined if all users are requested
+            begin_date: fromDate.isValid() ? fromDate.toISOString() : undefined, // If date is not valid, don't provide it.
+            end_date: toDate.isValid() ? toDate.toISOString() : undefined // If date is not valid, don't provide it.
+        })
+
+        $.post({
+            url: "/transactions/generate_csv", data: data
+        }).done(function (data, textStatus, jqXHR) {
+
+            // Do some magic to convert it to a proper csv file.
+            var filename = "";
+            var disposition = jqXHR.getResponseHeader('Content-Disposition');
+            if (disposition && disposition.indexOf('attachment') !== -1) {
+                var filenameRegex = /filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/;
+                var matches = filenameRegex.exec(disposition);
+                if (matches != null && matches[1]) filename = matches[1].replace(/['"]/g, '');
+            }
+            var type = jqXHR.getResponseHeader('Content-Type');
+
+            var blob;
+            if (typeof File === 'function') {
+                try {
+                    blob = new File([data], filename, {type: type});
+                } catch (e) { /* Edge */
+                }
+            }
+            if (typeof blob === 'undefined') {
+                blob = new Blob([data], {type: type});
+            }
+
+            if (typeof window.navigator.msSaveBlob !== 'undefined') {
+                // IE workaround for "HTML7007: One or more blob URLs were revoked by closing the blob for which they were created. These URLs will no longer resolve as the data backing the URL has been freed."
+                window.navigator.msSaveBlob(blob, filename);
+            } else {
+                var URL = window.URL || window.webkitURL;
+                var downloadUrl = URL.createObjectURL(blob);
+
+                // If we have a filename, try to download it.
+                if (filename) {
+                    // use HTML5 a[download] attribute to specify filename
+                    var a = document.createElement("a");
+                    // safari doesn't support this yet
+                    if (typeof a.download === 'undefined') {
+                        window.location.href = downloadUrl;
+                    } else {
+                        a.href = downloadUrl;
+                        a.download = filename;
+                        document.body.appendChild(a);
+                        a.click();
+                    }
+                } else {
+                    // Download the file
+                    window.location.href = downloadUrl;
+                }
+
+                // Remove the URL
+                setTimeout(function () {
+                    URL.revokeObjectURL(downloadUrl);
+                }, 100); // cleanup
+            }
+
+            resolve();
+
+        }).fail(function (error) {
+
+            console.log('Error getting CSV file.')
+            console.log("Status code: " + error.status + "\nError message: " + error.responseText)
+
+            reject();
+        });
+    });
+}
+
 
 
 
