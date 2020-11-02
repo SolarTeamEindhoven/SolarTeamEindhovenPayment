@@ -35,6 +35,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'dbbackup',
     'StellaPay'
 ]
 
@@ -116,3 +117,9 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/1.11/howto/static-files/
 
 STATIC_URL = '/static/'
+
+ADMINS = [("Vincent Bolta", "vincent.bolta@solarteameindhoven.nl")]
+
+# Backup storage
+DBBACKUP_STORAGE = 'django.core.files.storage.FileSystemStorage'
+DBBACKUP_STORAGE_OPTIONS = {'location': 'backups'}
