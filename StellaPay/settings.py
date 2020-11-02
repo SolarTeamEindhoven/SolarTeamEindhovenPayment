@@ -24,7 +24,7 @@ SECRET_KEY = 'ta7qqwph+795_6ukhscxb!jx(j@97lqqn(&1^jq4s8#9lnka=x'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['staartvin.com', '127.0.0.1']
+ALLOWED_HOSTS = ['staartvin.com', '127.0.0.1', '168.119.102.144']
 
 # Application definition
 
