@@ -1,0 +1,1 @@
+python3 ~/SolarTeamEindhovenPayment/manage.py dbbackup
