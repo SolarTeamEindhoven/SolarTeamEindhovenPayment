@@ -85,6 +85,11 @@ class Command(BaseCommand):
             self.stdout.write(
                 f"Read {total_lines} lines and successfully imported {total_lines - len(not_imported_rows)} lines.")
 
+            # Check if we even have failed rows.
+            if len(not_imported_rows) == 0:
+                self.stdout.write(f"All lines were imported successfully!")
+                return
+
             not_imported_rows_file = file_path.replace(".csv", "_not_imported.csv")
 
             # Write non-imported rows to a file
