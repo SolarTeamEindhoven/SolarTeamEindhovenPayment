@@ -150,3 +150,4 @@ media
 
 migrations/
 /backups/
+/imports/
