@@ -58,7 +58,7 @@
                             <td>{{ transaction.buyer }}</td>
                             <td>{{ transaction.item_bought }}</td>
                             <td>€{{ transaction.price }}</td>
-                            <td>{{ transaction.date_time }}</td>
+                            <td>{{ transaction.date_time | date:'d M Y - H:i' }}</td>
                         </tr>
                     {% endfor %}
                     </tbody>

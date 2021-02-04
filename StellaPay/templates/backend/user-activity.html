@@ -81,7 +81,7 @@
                             <tr>
                                 <td>{{ transaction.item_bought }}</td>
                                 <td>€{{ transaction.price }}</td>
-                                <td>{{ transaction.date_time | date:'d M yy - H:i' }}</td>
+                                <td>{{ transaction.date_time | date:'d M Y - H:i' }}</td>
                             </tr>
                         {% endfor %}
                         </tbody>
@@ -177,7 +177,7 @@
                             <tr class="transaction_entry">
                                 <td class="item_bought">{{ transaction.item_bought }}</td>
                                 <td class="item_price">€{{ transaction.price }}</td>
-                                <td class="item_purchase_datetime">{{ transaction.date_time | date:'d M yy - H:i' }}</td>
+                                <td class="item_purchase_datetime">{{ transaction.date_time | date:'d M Y - H:i' }}</td>
                             </tr>
                         {% endfor %}
                         </tbody>
