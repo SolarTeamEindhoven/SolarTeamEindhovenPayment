@@ -43,7 +43,7 @@
             </div>
             <div class="column">
 
-                <table class="ui selectable celled table">
+                <table class="ui striped selectable celled table">
                     <thead>
                     <tr>
                         <th>Name</th>
@@ -57,7 +57,7 @@
                         <tr>
                             <td>{{ transaction.buyer }}</td>
                             <td>{{ transaction.item_bought }}</td>
-                            <td>€{{ transaction.price }}</td>
+                            <td>€{{ transaction.price | floatformat:2 }}</td>
                             <td>{{ transaction.date_time | date:'d M Y - H:i' }}</td>
                         </tr>
                     {% endfor %}
@@ -81,7 +81,7 @@
         <div class="row">
             <div class="column">
 
-                <table class="ui selectable celled table">
+                <table class="ui selectable celled table striped">
                     <thead>
                     <tr>
                         <th>Name</th>
@@ -92,7 +92,7 @@
                     {% for debtor, total_debt in debts.items %}
                         <tr>
                             <td>{{ debtor }}</td>
-                            <td>€{{ total_debt }}</td>
+                            <td>€{{ total_debt | floatformat:2 }}</td>
                         </tr>
                     {% endfor %}
                     </tbody>
