@@ -244,7 +244,7 @@ function generateCSVFile(allUsers) {
         })
 
         $.post({
-            url: "/transactions/generate_csv", data: data
+            url: "/transactions/generate_special_csv", data: data
         }).done(function (data, textStatus, jqXHR) {
 
             // Do some magic to convert it to a proper csv file.
