@@ -1,6 +1,5 @@
 import csv
 import json
-from datetime import datetime
 
 import dateutil.parser
 import pytz
@@ -49,9 +48,7 @@ def get_transactions(request):
     try:
         begin_date_string = str(json_data["begin_date"])
 
-        begin_date = pytz.timezone('Europe/Amsterdam').localize(
-            datetime.strptime(begin_date_string, "%Y/%m/%d %H:%M:%S")).astimezone(
-            pytz.utc)
+        begin_date = dateutil.parser.parse(begin_date_string).astimezone(pytz.utc)
 
     except (KeyError, ValueError):
         # Ignore error
@@ -61,9 +58,7 @@ def get_transactions(request):
     try:
         end_date_string = str(json_data["end_date"])
 
-        end_date = pytz.timezone('Europe/Amsterdam').localize(
-            datetime.strptime(end_date_string, "%Y/%m/%d %H:%M:%S")).astimezone(
-            pytz.utc)
+        end_date = dateutil.parser.parse(end_date_string).astimezone(pytz.utc)
 
     except (KeyError, ValueError):
         # Ignore error
@@ -187,9 +182,7 @@ def get_all_transactions(request):
     try:
         begin_date_string = str(json_data["begin_date"])
 
-        begin_date = pytz.timezone('Europe/Amsterdam').localize(
-            datetime.strptime(begin_date_string, "%Y/%m/%d %H:%M:%S")).astimezone(
-            pytz.utc)
+        begin_date = dateutil.parser.parse(begin_date_string).astimezone(pytz.utc)
 
     except (KeyError, ValueError):
         # Ignore error
@@ -199,9 +192,7 @@ def get_all_transactions(request):
     try:
         end_date_string = str(json_data["end_date"])
 
-        end_date = pytz.timezone('Europe/Amsterdam').localize(
-            datetime.strptime(end_date_string, "%Y/%m/%d %H:%M:%S")).astimezone(
-            pytz.utc)
+        end_date = dateutil.parser.parse(end_date_string).astimezone(pytz.utc)
 
     except (KeyError, ValueError):
         # Ignore error

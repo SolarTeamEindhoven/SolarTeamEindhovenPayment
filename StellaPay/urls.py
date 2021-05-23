@@ -17,10 +17,11 @@ from django.conf.urls import url
 from django.contrib import admin
 from django.urls import path
 
-from .views import identification, users, products, transactions, categories, backend
+from .views import identification, users, products, transactions, categories, backend, frontend
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
+    path('', frontend.index, name="frontend-homepage"),
     path('backend/', backend.index, name="backend-homepage"),
     path('backend/login', backend.login, name="backend-login"),
     path('backend/user-activity/', backend.user_activity, name="backend-user-activity"),

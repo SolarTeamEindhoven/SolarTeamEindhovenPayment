@@ -4,7 +4,7 @@ $('.ui.dropdown').dropdown({
         // Grab current URL
         let url = new window.URL(document.location);
 
-        // Set paramater 'user' to email address of user.
+        // Set parameter 'user' to email address of user.
         url.searchParams.set("user", value);
 
         // Go to page with new url
