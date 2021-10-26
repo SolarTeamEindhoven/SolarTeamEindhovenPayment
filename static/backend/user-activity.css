@@ -1,0 +1,21 @@
+.container .input {
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.header.icon {
+    margin-bottom: 0 !important;
+}
+
+.search-box {
+    padding-top: 0 !important;
+}
+
+h1.divider {
+    margin-bottom: 2em !important;
+}
+
+.td-icons {
+    text-align: center !important;
+}
+
