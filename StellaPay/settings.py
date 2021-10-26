@@ -19,10 +19,12 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # See https://docs.djangoproject.com/en/1.11/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'ta7qqwph+795_6ukhscxb!jx(j@97lqqn(&1^jq4s8#9lnka=x'
+# SECRET_KEY = 'ta7qqwph+795_6ukhscxb!jx(j@97lqqn(&1^jq4s8#9lnka=x'
+SECRET_KEY = os.environ.get("DJANGO_SECRET_KEY", "ta7qqwph+795_6ukhscxb!jx(j@97lqqn(&1^jq4s8#9lnka=x")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+# Will default to true, and will only be false if we specify it in the env settings!
+DEBUG = os.environ.get('DJANGO_DEBUG', '') != 'False'
 
 ALLOWED_HOSTS = ['staartvin.com', '127.0.0.1', '168.119.102.144', '159.69.87.82']
 
@@ -117,6 +119,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/1.11/howto/static-files/
 
 STATIC_URL = '/static/'
+STATIC_ROOT = os.path.join(BASE_DIR, "static/")
 
 ADMINS = [("Vincent Bolta", "vincent.bolta@solarteameindhoven.nl")]
 
