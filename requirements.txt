@@ -63,7 +63,7 @@ python-dateutil==2.6.1
 pytz==2017.3
 pywin32==301
 pywinpty==0.5.7
-PyYAML==5.2
+PyYAML==5.4
 pyzmq==19.0.1
 requests==2.23.0
 scikit-fuzzy==0.4.2
