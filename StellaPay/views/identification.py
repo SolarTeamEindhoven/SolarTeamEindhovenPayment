@@ -32,6 +32,7 @@ def check_identification(request, card_id=None):
              "email": str(matched_device.owner.email)
          }})
 
+
 @csrf_exempt
 def generate_card_mapping(request):
     """Accept requests from /identification/add-card-mapping/"""
@@ -103,6 +104,22 @@ def get_cards_of_user(request, email: str):
         return HttpResponse("There is no user with that e-mail.", status=403)
 
     cards = RegistrationDevice.objects.filter(owner__email=email)
+
+    return JsonResponse([{"card_id": card.uuid,
+                          "owner": {
+                              "name": str(card.owner),
+                              "email": str(card.owner.email)
+                          }} for card in cards], safe=False)
+
+
+def get_all_cards(request):
+    """Accept requests from /identification/cards"""
+
+    # Check if user is authenticated
+    if not request.user.is_authenticated:
+        return HttpResponse("You need to be authenticated first", status=401)
+
+    cards = RegistrationDevice.objects.all()
 
     return JsonResponse([{"card_id": card.uuid,
                           "owner": {
